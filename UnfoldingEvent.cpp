@@ -459,14 +459,15 @@ bool EventSet::isConfig()
 
 EventSet EventSet::makeUnion(EventSet s1, EventSet s2)
 {
-  EventSet res = s1;
-  //	res.events_.insert(s1.events_.begin(), s1.events_.end());
-  //	res.events_.insert(s2.events_.begin(), s2.events_.end());
+	EventSet res;
 
-  for (auto evt : s2.events_)
-    res.insert(evt);
+	for (auto evt : s1.events_)
+		res.insert(evt);
 
-  return res;
+	for (auto evt : s2.events_)
+		res.insert(evt);
+
+	return res;
 }
 
 EventSet EventSet::makeIntersection(EventSet s1, EventSet s2)
