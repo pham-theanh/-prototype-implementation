@@ -255,6 +255,66 @@ int main(int argc, char** argv)
       // exhautiveExplore(stateStack, transList);
 
     } break;
+case 167: { //RMQ-receiving
+		std::cout<<"hello";
+
+		//Transition (maiboxid, commid, type)
+			actor_set.insert(Actor(0, { Transition (1, 1, "Ireceive"),Transition (1, 1, "Wait"),
+										Transition (1, 2, "Ireceive"),Transition (1, 2, "Wait"),
+										Transition (1, 3, "Ireceive"),Transition (1, 3, "Wait"),
+										Transition (1, 4, "Ireceive"),Transition (1, 4, "Wait"),
+										Transition (1, 5, "Ireceive"),Transition (1, 4, "Wait")	}));
+
+			actor_set.insert(Actor(1,{  Transition (1, 1, "Isend"),	Transition (1, 1, "Wait") }));
+			actor_set.insert(Actor(2,{ Transition (1, 1, "Isend"),Transition (1, 1, "Wait")}));
+			actor_set.insert(Actor(3,{ Transition (1, 1, "Isend"),Transition (1, 1, "Wait")}));
+			actor_set.insert(Actor(4,{ Transition (1, 1, "Isend"),Transition (1, 1, "Wait")}));
+			actor_set.insert(Actor(5,{ Transition (1, 1, "Isend"),Transition (1, 1, "Wait")}));
+
+			initState = new State(6, actor_set, { Mailbox(1) });
+			UnfoldingEvent *e = new UnfoldingEvent(initState);
+			UC.explore(C, { EventSet() }, D, A, e, prev_exC, actor_set);
+
+			//std::cout << "\n explore full state space :\n";
+
+			State initState1(5, actor_set, { Mailbox(1) });
+			stateStack.push_back(initState1);
+			//exhautiveExplore(stateStack, transList);
+
+
+	}
+		break;
+		
+		
+	case 168: { //RMQ-receiving 5, 24 traces
+		std::cout<<"hello";
+
+		//Transition (maiboxid, commid, type)
+			actor_set.insert(Actor(0, { Transition (1, 1, "Ireceive"),Transition (1, 1, "Wait"),
+										Transition (1, 2, "Ireceive"),Transition (1, 2, "Wait"),
+										Transition (1, 3, "Ireceive"),Transition (1, 3, "Wait"),
+										Transition (1, 4, "Ireceive"),Transition (1, 4, "Wait")
+
+			}));
+
+			actor_set.insert(Actor(1,{  Transition (1, 1, "Isend"),	Transition (1, 1, "Wait") }));
+			actor_set.insert(Actor(2,{ Transition (1, 1, "Isend"),Transition (1, 1, "Wait")}));
+			actor_set.insert(Actor(3,{ Transition (1, 1, "Isend"),Transition (1, 1, "Wait")}));
+			actor_set.insert(Actor(4,{ Transition (1, 1, "Isend"),Transition (1, 1, "Wait")}));
+
+			initState = new State(5, actor_set, { Mailbox(1) });
+			UnfoldingEvent *e = new UnfoldingEvent(initState);
+			UC.explore(C, { EventSet() }, D, A, e, prev_exC, actor_set);
+
+			//std::cout << "\n explore full state space :\n";
+
+			State initState1(5, actor_set, { Mailbox(1) });
+			stateStack.push_back(initState1);
+			//exhautiveExplore(stateStack, transList);
+
+
+	}
+		break;
 
     case 17: { //  3 traces
 
@@ -444,6 +504,50 @@ int main(int argc, char** argv)
       stateStack.push_back(initState1);
       // exhautiveExplore(stateStack, transList);
     } break;
+
+
+    case 251: { //  master- slaver 5 nodes
+      // master node
+      actor_set.insert(Actor(0, {Transition(2, 1, "Isend"), Transition(3, 2, "Isend"), Transition(4, 3, "Isend"),
+    		  Transition(5, 40, "Isend"), Transition(2, 1, "Wait"), Transition(3, 2, "Wait"), Transition(4, 3, "Wait"), Transition(5, 40, "Wait"),
+                                 Transition(1, 4, "Ireceive"), Transition(1, 4, "Wait"), Transition(1, 5, "Ireceive"),
+                                 Transition(1, 5, "Wait"), Transition(1, 6, "Ireceive"), Transition(1, 6, "Wait") ,
+								 Transition(1, 7, "Ireceive"), Transition(1, 7, "Wait")
+
+
+      }));
+
+
+      // client 1
+      actor_set.insert(Actor(1, {Transition(2, 1, "Ireceive"), Transition(2, 1, "Wait"), Transition(0, 0, "localComp"),
+                                 Transition(1, 2, "Isend"), Transition(1, 2, "Wait")}));
+      // client 2
+      actor_set.insert(Actor(2, {Transition(3, 1, "Ireceive"), Transition(3, 1, "Wait"), Transition(0, 0, "localComp"),
+                                 Transition(1, 2, "Isend"), Transition(1, 2, "Wait")}));
+      // client 3
+      actor_set.insert(Actor(3, {Transition(4, 1, "Ireceive"), Transition(4, 1, "Wait"), Transition(0, 0, "localComp"),
+                                 Transition(1, 2, "Isend"), Transition(1, 2, "Wait")}));
+
+
+      // client 4
+      actor_set.insert(Actor(4, {Transition(5, 1, "Ireceive"), Transition(5, 1, "Wait"), Transition(0, 0, "localComp"),
+                                     Transition(1, 2, "Isend"), Transition(1, 2, "Wait")}));
+
+      initState = new State(5, actor_set, {Mailbox(1), Mailbox(2), Mailbox(3), Mailbox(4), Mailbox(5) });
+
+      UnfoldingEvent* e = new UnfoldingEvent(initState);
+      UC.explore(C, {EventSet()}, D, A, e, prev_exC, actor_set);
+
+      std::cout << "\n explore full state space :\n";
+
+      State initState1(5, actor_set, {Mailbox(0), Mailbox(1), Mailbox(2)});
+      stateStack.push_back(initState1);
+      // exhautiveExplore(stateStack, transList);
+    } break;
+
+
+
+
 
     case 26: { //  master- slaver 3 nodes
 
@@ -771,13 +875,284 @@ else if (rank == 2)
       stateStack.push_back(initState1);
       // exhautiveExplore(stateStack,transList);
     } break;
+  case 35: { // heat Defusion
+			//Transition (maiboxid, commid, type, soure, dest)
+			//node 0
+    	actor_set.insert(Actor(0,{
+			Transition (1, 1, "Isend"), Transition (1, 1, "Wait"),
+			Transition (2, 2, "Isend"), Transition (2, 2, "Wait"),
+			Transition (3, 3, "Isend"), Transition (3, 3, "Wait"),
+
+			Transition (0, 4, "Ireceive"), Transition (0, 4, "Wait"),
+			Transition (1, 5, "Isend"),    Transition (1, 5, "Wait"),
+			Transition (0, 6, "Ireceive"), Transition (0, 6, "Wait"),
+			Transition (2, 7, "Isend"),    Transition (2, 7, "Wait"),
+			Transition (0, 8, "Ireceive"), Transition (0, 8, "Wait"),
+			Transition (3, 9, "Isend"),    Transition (3, 9, "Wait"),
+
+			Transition (11, 10, "Ireceive"), Transition (11, 10, "Wait"),
+			Transition (12, 11, "Ireceive"), Transition (12, 11, "Wait"),
+			Transition (13, 12, "Ireceive"), Transition (13, 12, "Wait"),
+
+
+			Transition (1, 13, "Isend"), Transition (1, 13, "Wait"),
+			Transition (2, 14, "Isend"), Transition (2, 14, "Wait"),
+			Transition (3, 15, "Isend"), Transition (3, 15, "Wait"),
+    		}));
+
+		actor_set.insert(Actor(1,{
+			Transition (1, 1, "Ireceive"), Transition (1, 1, "Wait"),
+			Transition (0, 2, "Isend"), Transition (0, 2, "Wait"),
+			Transition (1, 3, "Ireceive"), Transition (1, 3, "Wait"),
+			Transition (11, 4, "Isend"), Transition (11, 4, "Wait"),
+			Transition (1, 5, "Ireceive"), Transition (1, 5, "Wait"),
+
+			}));
+
+		actor_set.insert(Actor(2,{
+			Transition (2, 1, "Ireceive"), Transition (2, 1, "Wait"),
+			Transition (0, 2, "Isend"), Transition (0, 2, "Wait"),
+			Transition (2, 3, "Ireceive"), Transition (2, 3, "Wait"),
+			Transition (12, 4, "Isend"), Transition (12, 4, "Wait"),
+			Transition (2, 5, "Ireceive"), Transition (2, 5, "Wait"),
+
+			}));
+
+		actor_set.insert(Actor(3,{
+			Transition (3, 1, "Ireceive"), Transition (3, 1, "Wait"),
+			Transition (0, 2, "Isend"), Transition (0, 2, "Wait"),
+			Transition (3, 3, "Ireceive"), Transition (3, 3, "Wait"),
+			Transition (13, 4, "Isend"), Transition (13, 4, "Wait"),
+			Transition (3, 5, "Ireceive"), Transition (3, 5, "Wait"),
+
+			}));
+
+
+			initState = new State(4, actor_set,	{ Mailbox(0), Mailbox(1), Mailbox(2), Mailbox(3), Mailbox(11), Mailbox(12), Mailbox(13)});
+
+			UnfoldingEvent *e = new UnfoldingEvent(initState);
+	        UC.explore(C, { EventSet() }, D, A, e, prev_exC, actor_set);
+		}
+			break;
+
+    
+
+  case 36: { //sendrecv-deadlock.c
+
+	  /*if (rank == 0)
+	{
+	  memset (buf0, 0, buf_size);
+
+	  MPI_Sendrecv (buf0, buf_size, MPI_INT, 1, 0,
+			buf1, buf_size, MPI_INT, 1, 0,
+			MPI_COMM_WORLD, &status);
+
+	  MPI_Recv (buf0, buf_size, MPI_INT, 2, 0, MPI_COMM_WORLD, &status);
+	}
+      else if (rank == 1)
+	{
+	  memset (buf1, 1, buf_size);
+
+	  MPI_Recv (buf0, buf_size, MPI_INT, 0, 0, MPI_COMM_WORLD, &status);
+
+	  MPI_Send (buf1, buf_size, MPI_INT, 2, 0, MPI_COMM_WORLD);
+
+	  MPI_Send (buf1, buf_size, MPI_INT, 0, 0, MPI_COMM_WORLD);
+	}
+      else if (rank == 2)
+	{
+	  memset (buf1, 1, buf_size);
+
+	  MPI_Send (buf1, buf_size, MPI_INT, 0, 0, MPI_COMM_WORLD);
+
+	  MPI_Recv (buf0, buf_size, MPI_INT, 1, 0, MPI_COMM_WORLD, &status);
+	}
+ */
+
+		//Transition (maiboxid, commid, type)
+		//node 0
+
+
+    	actor_set.insert(Actor(0,{
+
+			Transition (1, 1, "Isend"),	Transition (0, 2, "Ireceive"),
+			Transition (1, 1, "Wait"), Transition (0, 2, "Wait"),
+			Transition (3, 3, "Ireceive"), Transition (3, 3, "Wait"),
+    		}));
+
+		actor_set.insert(Actor(1,{
+			Transition (1, 1, "Ireceive"), Transition (1, 1, "Wait"),
+			Transition (2, 2, "Isend"), Transition (2, 2, "Wait"),
+			Transition (0, 3, "Isend"), Transition (0, 3, "Wait"),
+
+			}));
+
+		actor_set.insert(Actor(2,{
+			Transition (3, 1, "Isend"), Transition (3, 1, "Wait"),
+			Transition (2, 2, "Ireceive"), Transition (2, 2, "Wait"),
+
+			}));
+
+
+			initState = new State(3, actor_set,	{ Mailbox(0), Mailbox(1), Mailbox(2), Mailbox(3)});
+
+
+
+		   UnfoldingEvent *e = new UnfoldingEvent(initState);
+	      // UC.explore(C, { EventSet() }, D, A, e, prev_exC, actor_set);
+
+	        std::cout << "\n explore full state space :\n";
+
+	             State initState1(3, actor_set, {Mailbox(0), Mailbox(1), Mailbox(2), Mailbox(3)});
+	             stateStack.push_back(initState1);
+	           exhautiveExplore(stateStack,transList);
+
+		}
+			break;
+
+
+  case 37: { //send-recv-ok
+
+	  /*
+	  			  else if (rank == 0)
+	  			    {
+	  			      memset (buf0, 0, buf_size);
+	  			      MPI_Send (buf0, buf_size, MPI_INT, 1, 0, MPI_COMM_WORLD);
+	  			      MPI_Recv (buf1, buf_size, MPI_INT, 1, 0, MPI_COMM_WORLD, &status);
+	  			    }
+	  			  else if (rank == 1)
+	  			    {
+	  			      MPI_Recv (buf0, buf_size, MPI_INT, 0, 0, MPI_COMM_WORLD, &status);
+	  			      memset (buf1, 1, buf_size);
+	  			      MPI_Send (buf1, buf_size, MPI_INT, 0, 0, MPI_COMM_WORLD);
+	  			    }
+	  	*/
+
+
+		//Transition (maiboxid, commid, type)
+		//node 0
+
+
+    	actor_set.insert(Actor(0,{
+
+			Transition (1, 1, "Isend"),Transition (1, 1, "Wait"),
+			Transition (0, 2, "Ireceive"), Transition (0, 2, "Wait"),
+    		}));
+
+		actor_set.insert(Actor(1,{
+			Transition (1, 1, "Ireceive"), Transition (1, 1, "Wait"),
+			Transition (0, 2, "Isend"), Transition (0, 2, "Wait"),
+
+			}));
+
+
+			initState = new State(2, actor_set,	{ Mailbox(0), Mailbox(1)});
+
+
+
+		//	UnfoldingEvent *e = new UnfoldingEvent(initState);
+	    // UC.explore(C, { EventSet() }, D, A, e, prev_exC, actor_set);
+
+	    std::cout << "\n explore full state space :\n";
+
+	             State initState1(3, actor_set, {Mailbox(0), Mailbox(1), Mailbox(2), Mailbox(3)});
+	             stateStack.push_back(initState1);
+	            exhautiveExplore(stateStack,transList);
+
+		}
+			break;
+
+  case 38: { /*any_src-waitall-deadlock
+	if (rank == 0)
+    {
+      MPI_Irecv (buf0, buf_size, MPI_INT,
+		 MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &reqs[0]);
+
+      MPI_Irecv (buf1, buf_size, MPI_INT,
+		 MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &reqs[1]);
+
+      MPI_Waitall (2, reqs, statuses);
+
+      MPI_Send (buf1, buf_size, MPI_INT, 1, 1, MPI_COMM_WORLD);
+
+      MPI_Send (buf0, buf_size, MPI_INT, 2, 2, MPI_COMM_WORLD);
+    }
+  else if (rank == 1)
+    {
+      memset (buf0, 0, buf_size);
+
+      MPI_Send (buf0, buf_size, MPI_INT, 0, 0, MPI_COMM_WORLD);
+
+      MPI_Recv (buf1, buf_size, MPI_INT, 0, 1, MPI_COMM_WORLD, statuses);
+    }
+  else if (rank == 2)
+    {
+      MPI_Recv (buf0, buf_size, MPI_INT, 0, 2, MPI_COMM_WORLD, statuses);
+
+      memset (buf1, 1, buf_size);
+
+      MPI_Send (buf1, buf_size, MPI_INT, 0, 0, MPI_COMM_WORLD);
+    }
+
+            */
+     // Transition (maiboxid, commid, type)
+
+     // node 0
+     actor_set.insert(Actor(0, {Transition(0, 1, "Ireceive"), Transition(0, 2, "Ireceive"),
+                                Transition(0, 1, "Wait"),  Transition(0, 2, "Wait"),
+
+								Transition(1, 3, "Isend"), Transition(1, 3, "Wait"),
+								Transition(2, 4, "Isend"), Transition(2, 4, "Wait")
+
+
+     }));
+     // node 1
+     actor_set.insert(Actor(1, {Transition(0, 1, "Isend"), Transition(0, 1, "Wait"),
+    		 Transition(1, 2, "Ireceive"),  Transition(1, 2, "Wait")}));
+
+     // node 2
+     actor_set.insert(Actor(2, {Transition(2, 1, "Ireceive"), Transition(2, 1, "Wait"),
+    		 	 	 	 	 	Transition(0, 1, "Isend"), Transition(0, 1, "Wait")
+
+     }));
+
+
+
+
+
+    // initState = new State(3, actor_set, {Mailbox(0), Mailbox(1), Mailbox(2)});
+//
+   //  UnfoldingEvent* e = new UnfoldingEvent(initState);
+    // UC.explore(C, {EventSet()}, D, A, e, prev_exC, actor_set);
+
+   //  std::cout << "\n explore full state space :\n";
+//
+     State initState1(3, actor_set, {Mailbox(0), Mailbox(1), Mailbox(2)});
+     stateStack.push_back(initState1);
+      exhautiveExplore(stateStack,transList);
+   } break;
+
+
+
+
   }
+
+
+
   clock_t end         = clock();
   double elapsed_secs = double(end - begin) / (60 * CLOCKS_PER_SEC);
 
-  std::cout << " Time in second= " << double(end - begin) / (CLOCKS_PER_SEC) << "  \n";
-  std::cout << " Time in minutes= " << elapsed_secs << "  \n";
+	 // std::cout<<" Alternative time = " << AlternativeTime << "\n ";
+	  //std::cout<<" Alternative time1 = " << AlternativeTime1 << "\n ";
+	  //std::cout<<" Alternative time2 = " << AlternativeTime2 << "\n ";
+	 // std::cout<<" Alternative time3 = " << AlternativeTime3 << "\n ";
 
-  std::cout << " \n main() finished ";
+
+      std::cout << " Time in second= " << double(end - begin) / (CLOCKS_PER_SEC) << "  \n";
+      std::cout << " Time in minutes= " << elapsed_secs << "  \n";
+
+      cout<<"Totally we have " << G.size() <<" events \n";
+      cout <<"saving events = "<< savedEvents <<" \n";
+      std::cout << " \n main() finished ";
   return 0;
 }

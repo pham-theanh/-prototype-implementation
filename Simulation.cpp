@@ -208,13 +208,12 @@ std::set<Transition> State::getEnabledTransition()
         break;
       }
 
-  /*
+/*
           std::cout<<"\n enabled transitions : \n";
            for(auto tr : trans_set)
            std::cout<< "actorid =" << tr.actor_id<<" \n id="<< tr.id <<" mailbox="<<tr.mailbox_id<<" comm= " <<tr.commId
            << " type ="<<tr.type <<"\n";
-           std::cout<<" \n het ---\n";
-  */
+           std::cout<<" \n het ---\n";*/
 
   return trans_set;
 }

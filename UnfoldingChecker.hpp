@@ -15,7 +15,15 @@ class EventSet;
 class Transition;
 class Actor;
 extern unsigned int nb_events;
+
 extern unsigned int nb_traces;
+extern  double AlternativeTime;
+extern  double AlternativeTime1;
+extern  double AlternativeTime2;
+extern  double AlternativeTime3;
+
+extern unsigned int savedEvents;
+
 
 extern EventSet U, G, gD;
 
@@ -65,8 +73,8 @@ public:
   unsigned int nbSend    = 0;
   unsigned int nbReceive = 0;
 
-  std::array<Communication, 20> sendList;
-  std::array<Communication, 20> receiveList;
+  std::array<Communication, 200> sendList;
+  std::array<Communication, 200> receiveList;
   void update(Transition t);
   bool checkComm(Transition t);
   bool operator<(const Mailbox& other) const;

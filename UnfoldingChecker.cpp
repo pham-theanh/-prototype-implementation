@@ -10,7 +10,14 @@
 
 unsigned int nb_events = 0;
 unsigned int nb_traces = 0;
+
+
 EventSet U, G, gD;
+double AlternativeTime =0;
+double AlternativeTime1 =0;
+double AlternativeTime2 =0;
+double AlternativeTime3 =0;
+unsigned int savedEvents = 0;
 
 /*void UnfoldingChecker::computeAlt(EventSet& J, EventSet D, Configuration C,
  EventSet U1, EventSet Uc) {
@@ -58,9 +65,9 @@ EventSet U, G, gD;
  }
 
  }*/
-void intTobinary(int n, int p[])
+void intTobinary(unsigned int n, unsigned int p[])
 {
-  int i = 0;
+	unsigned int i = 0;
   while (n != 0) {
     p[i] = n % 2;
     i++;
@@ -144,13 +151,37 @@ void ksubset(unsigned long sizeD, std::list<UnfoldingEvent*> EvtList, std::list<
   //	std::cout << " \n finish ksubset \n";
 }
 
-EventSet UnfoldingChecker::KpartialAlt(EventSet D, Configuration C)
+
+int K = 6;
+EventSet UnfoldingChecker::KpartialAlt(EventSet D1, Configuration C)
 {
+	EventSet D;
+
+  if( K >= D1.size()) {   D = D1;}
+	  else  {
+	 // std::cout <<" \n smaller than D1 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> =  " << D1.size();
+	  int count = 0;
+	  set<UnfoldingEvent*>::reverse_iterator rit;
+
+	     for (rit=D1.events_.rbegin(); rit != D1.events_.rend(); ++rit)
+	     {
+	       D.insert(*rit);
+	       count ++;
+	       if(count == K) break;
+	     }
+	  }
+
+
+
+
 
   EventSet J, J1, emptySet, result;
   std::list<EventSet> kSet;
 
   /*for each evt in D, add all evt1 in U that is conflict with evt to a set(spike) */
+
+  clock_t begin1 = clock();
+
 
   for (auto evt : D.events_) {
     EventSet evtSet;
@@ -160,6 +191,15 @@ EventSet UnfoldingChecker::KpartialAlt(EventSet D, Configuration C)
 
     kSet.push_back(evtSet);
   }
+  
+	clock_t end1 = clock();
+
+	double elapsed_secs1 = double(end1 - begin1) / (CLOCKS_PER_SEC);
+
+	AlternativeTime1 = AlternativeTime1 + elapsed_secs1;
+  
+  
+  
 
   std::list<EventSet> kSet1;
 
@@ -169,6 +209,8 @@ EventSet UnfoldingChecker::KpartialAlt(EventSet D, Configuration C)
   }
 
   else {
+	  
+	    clock_t begin2 = clock();
 
     // for each spike, remove all evt whose [evt] is conflict with C
     for (auto it : kSet) {
@@ -178,23 +220,11 @@ EventSet UnfoldingChecker::KpartialAlt(EventSet D, Configuration C)
 
         EventSet subC, sub_history, history = evt->getHistory();
         history.insert(evt);
-
-        /*			subC = C;
-                                sub_history = history;
-
-                                // remove all common events
-
-                                for(auto evt1: C.events_) if (history.contains(evt1)) {subC.erase(evt1);
-           sub_history.erase(evt1);}
-
-                        if ( (! history.isEmptyIntersection(history,D)) or  (subC.depends(sub_history)))*/
-
         bool chk = false;
 
         if (not history.isEmptyIntersection(history, D)) {
 
           chk = true;
-          // if (evt->id == 29)std::cout <<"\n va chk =" << chk <<" \n";
 
         } else
           for (auto it1 : C.events_)
@@ -203,9 +233,8 @@ EventSet UnfoldingChecker::KpartialAlt(EventSet D, Configuration C)
               break;
             }
 
-        // if (evt->id == 29)std::cout<<" sau khi kt dk chk =" << chk << " \n";
 
-        if (chk) { // if (evt->id == 29)std::cout<<" se xoa thang 29 nhe chk =" << chk << " \n";
+        if (chk) { 
           evtS.erase(evt);
         }
       }
@@ -219,11 +248,28 @@ EventSet UnfoldingChecker::KpartialAlt(EventSet D, Configuration C)
       kSet1.push_back(evtS);
     }
 
+
+	clock_t end2 = clock();
+
+	double elapsed_secs2 = double(end2 - begin2) / (CLOCKS_PER_SEC);
+
+	AlternativeTime2 = AlternativeTime2 + elapsed_secs2;
+
+
     // building J by chosing one event in each spike such that there are not 2 conflict events in J
+    
+    clock_t begin3 = clock();
+
     unsigned int n = 0;
     std::list<UnfoldingEvent*> EvtList;
 
     ksubset(D.size(), EvtList, kSet1, n, J1);
+    
+    
+   	clock_t end3 = clock();
+	double elapsed_secs3 = double(end3 - begin3) / (CLOCKS_PER_SEC);
+
+	AlternativeTime3 = AlternativeTime3 + elapsed_secs3;
   }
 
   // J1.size() can be < D.size() since one event in J1 can be conflict with some events in D
@@ -261,11 +307,11 @@ EventSet UnfoldingChecker::computeAlt(EventSet D, Configuration C)
 
   EventSet Uc = U;
 
-  int nbsubset = pow(2, Uc.size());
+  unsigned int nbsubset = pow(2, Uc.size());
 
   for (auto i = 1; i < nbsubset; i++) {
 
-    int B[Uc.size()];
+	  unsigned int B[Uc.size()];
     EventSet U1;
     int k = 0;
 
@@ -1483,7 +1529,10 @@ void UnfoldingChecker::explore(Configuration C, std::list<EventSet> maxEvtHistor
 {
 
   UnfoldingEvent* e;
+
   EventSet enC, exC = prev_exC; // exC.erase(currentEvt);
+
+
 
   exC.erase(currentEvt);
 
@@ -1493,6 +1542,14 @@ void UnfoldingChecker::explore(Configuration C, std::list<EventSet> maxEvtHistor
 
   for (auto it : C.events_)
     exC.erase(it);
+
+
+  // computing how many recomputation events
+  savedEvents = savedEvents + prev_exC.size() -1;
+
+
+
+
 
   // return when enC \subset of D
 
@@ -1581,7 +1638,16 @@ void UnfoldingChecker::explore(Configuration C, std::list<EventSet> maxEvtHistor
 
   EventSet J1;
 
-  J = KpartialAlt(D1, C);
+ // J = KpartialAlt(D1, C);
+  
+  	clock_t begin = clock();
+	J = KpartialAlt(D1 , C);
+	clock_t end = clock();
+
+	double elapsed_secs = double(end - begin) / (CLOCKS_PER_SEC);
+
+	AlternativeTime = AlternativeTime + elapsed_secs;
+  
   // J = computeAlt(D2, C);
 
   if (not J.empty()) {
@@ -1622,7 +1688,7 @@ void UnfoldingChecker::remove(UnfoldingEvent* e, Configuration C, EventSet D)
   if (not res.contains(e)) {
     U.erase(e);
 
-    // G.insert(e);
+    G.insert(e);
   }
 
   // move history of ê from U to G
@@ -1638,7 +1704,7 @@ void UnfoldingChecker::remove(UnfoldingEvent* e, Configuration C, EventSet D)
       for (auto e2 : h.events_)
         if (not res.contains(e2)) {
           U.erase(e2);
-          //	G.insert(e2);
+          G.insert(e2);
         }
     }
   }
