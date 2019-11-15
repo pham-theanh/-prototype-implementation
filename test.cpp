@@ -69,7 +69,7 @@ int main(int argc, char** argv)
   std::list<set<int>> maxEventHis;
 
   int example = 1;
-  std::cout << " enter example:";
+  std::cout << " EEnter example:";
   if (argc == 2)
     example = std::atoi(argv[1]);
   else
@@ -540,8 +540,8 @@ case 167: { //RMQ-receiving
 
       std::cout << "\n explore full state space :\n";
 
-      State initState1(5, actor_set, {Mailbox(0), Mailbox(1), Mailbox(2)});
-      stateStack.push_back(initState1);
+      //State initState1(5, actor_set, {Mailbox(0), Mailbox(1), Mailbox(2)});
+      //stateStack.push_back(initState1);
       // exhautiveExplore(stateStack, transList);
     } break;
 
@@ -1152,6 +1152,9 @@ else if (rank == 2)
       std::cout << " Time in minutes= " << elapsed_secs << "  \n";
 
       cout<<"Totally we have " << G.size() <<" events \n";
+      cout<<"Totally created events " << totalCreatedEvents <<" events \n";
+      cout<<"exC Time =" << exCtime <<"  \n";
+
       cout <<"saving events = "<< savedEvents <<" \n";
       std::cout << " \n main() finished ";
   return 0;

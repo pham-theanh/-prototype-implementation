@@ -21,8 +21,11 @@ extern  double AlternativeTime;
 extern  double AlternativeTime1;
 extern  double AlternativeTime2;
 extern  double AlternativeTime3;
+extern  double exCtime;
 
 extern unsigned int savedEvents;
+extern unsigned int createdEvents;
+extern unsigned int totalCreatedEvents;
 
 
 extern EventSet U, G, gD;

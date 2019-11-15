@@ -18,6 +18,9 @@ double AlternativeTime1 =0;
 double AlternativeTime2 =0;
 double AlternativeTime3 =0;
 unsigned int savedEvents = 0;
+unsigned int createdEvents = 0;
+unsigned int totalCreatedEvents =0;
+extern  double exCtime =0;
 
 /*void UnfoldingChecker::computeAlt(EventSet& J, EventSet D, Configuration C,
  EventSet U1, EventSet Uc) {
@@ -152,7 +155,7 @@ void ksubset(unsigned long sizeD, std::list<UnfoldingEvent*> EvtList, std::list<
 }
 
 
-int K = 6;
+int K = 7;
 EventSet UnfoldingChecker::KpartialAlt(EventSet D1, Configuration C)
 {
 	EventSet D;
@@ -1321,6 +1324,7 @@ EventSet createSendReceiveEvts(Transition trans, Configuration C, std::list<Even
 void UnfoldingChecker::extend(std::set<Actor> actors, Configuration C, std::list<EventSet> maxEvtHistory, EventSet& exC,
                               EventSet& enC)
 {
+ clock_t bg = clock();
 
   // in the initial state each actor creates one event
   EventSet causes;
@@ -1328,6 +1332,10 @@ void UnfoldingChecker::extend(std::set<Actor> actors, Configuration C, std::list
     for (auto p : actors) {
       nb_events++;
       UnfoldingEvent* newEvent = new UnfoldingEvent(nb_events, p.trans[0], causes);
+
+      //below line for count recomputations
+      createdEvents = createdEvents +1;
+
       if (not U.contains(newEvent)) {
         U.insert(newEvent);
         enC.insert(newEvent);
@@ -1340,6 +1348,7 @@ void UnfoldingChecker::extend(std::set<Actor> actors, Configuration C, std::list
     }
 
   } else {
+
 
     // get all enabled transitions at current appState
     std::set<Transition> enabledTransitions;
@@ -1359,6 +1368,10 @@ void UnfoldingChecker::extend(std::set<Actor> actors, Configuration C, std::list
           std::list<EventSet> maxEvtHistory1 = maxEvtHistory;
 
           exC1 = computeExt(C, maxEvtHistory1, trans);
+
+          // below line is used for computing recompuations
+          createdEvents = createdEvents + exC1.size();
+
         }
 
         for (auto newEvent : exC1.events_)
@@ -1376,6 +1389,10 @@ void UnfoldingChecker::extend(std::set<Actor> actors, Configuration C, std::list
                (trans.isDependent(C.lastEvent->transition) or
                 (C.lastEvent->transition.type == "Test" and C.lastEvent->transition.mailbox_id == trans.mailbox_id))) {
         EventSet exC1 = createIsendEvts(trans, C);
+
+        // below line is used for computing recompuations
+         createdEvents = createdEvents + exC1.size();
+
         for (auto newEvent : exC1.events_)
           if (not U.contains(newEvent)) {
             U.insert(newEvent);
@@ -1388,7 +1405,13 @@ void UnfoldingChecker::extend(std::set<Actor> actors, Configuration C, std::list
       else if (trans.type == "Ireceive" and
                (trans.isDependent(C.lastEvent->transition) or
                 (C.lastEvent->transition.type == "Test" and C.lastEvent->transition.mailbox_id == trans.mailbox_id))) {
+
         EventSet exC1 = createIreceiveEvts(trans, C);
+
+        // below line is used for computing recompuations
+           createdEvents = createdEvents + exC1.size();
+
+
         for (auto newEvent : exC1.events_)
           if (not U.contains(newEvent)) {
             U.insert(newEvent);
@@ -1401,6 +1424,7 @@ void UnfoldingChecker::extend(std::set<Actor> actors, Configuration C, std::list
       else if (trans.type == "Wait") {
 
         // check which kind of communication (send/receive) waited by the wait?
+
         UnfoldingEvent* evt;
         for (auto evt1 : C.events_)
           if (evt1->transition.actor_id == trans.actor_id and evt1->transition.commId == trans.commId) {
@@ -1416,9 +1440,13 @@ void UnfoldingChecker::extend(std::set<Actor> actors, Configuration C, std::list
 
         if (C.lastEvent->transition.actor_id == trans.actor_id or (comType == "Isend" and comType1 == "Ireceive") or
             (comType == "Ireceive" and comType1 == "Isend")) {
+
+
           EventSet newEvts = createWaitEvt(evt, C, trans);
 
-          // EventSet unionSet = U.makeUnion(U,gD1);
+          // below line is used for computing recompuations
+             createdEvents = createdEvents + newEvts.size();
+
 
           for (auto newEvent : newEvts.events_)
             if (not U.contains(newEvent)) {
@@ -1455,6 +1483,10 @@ void UnfoldingChecker::extend(std::set<Actor> actors, Configuration C, std::list
         {
           EventSet newEvts = createTestEvt(exC, event, C, trans);
 
+          // below line is used for computing recompuations
+             createdEvents = createdEvents + newEvts.size();
+
+
           for (auto newEvent : newEvts.events_)
             if (not U.contains(newEvent)) {
 
@@ -1471,7 +1503,14 @@ void UnfoldingChecker::extend(std::set<Actor> actors, Configuration C, std::list
         EventSet ancestors;
         ancestors.insert(C.lastEvent);
         nb_events++;
+
         UnfoldingEvent* newEvent = new UnfoldingEvent(nb_events, trans, ancestors);
+
+        // below line is used for computing recompuations
+           createdEvents = createdEvents +1;
+
+
+
         if (not U.contains(newEvent)) {
           U.insert(newEvent);
           exC.insert(newEvent);
@@ -1480,6 +1519,8 @@ void UnfoldingChecker::extend(std::set<Actor> actors, Configuration C, std::list
           exC.insert(U.find(newEvent));
       }
     }
+
+
 
     for (auto evt : exC.events_) {
       /* add new event evt to enC if evt's transition is not dependent with any transition of a event
@@ -1504,6 +1545,12 @@ void UnfoldingChecker::extend(std::set<Actor> actors, Configuration C, std::list
         enC.insert(evt);
     }
   }
+
+
+  clock_t end1 = clock();
+  double elapsed_secs1 = double(end1 - bg) / (CLOCKS_PER_SEC);
+  exCtime = exCtime + elapsed_secs1;
+
 }
 
 void UnfoldingChecker::explore(State* state)
@@ -1538,14 +1585,26 @@ void UnfoldingChecker::explore(Configuration C, std::list<EventSet> maxEvtHistor
 
   // exC = previous exC - currentEvt + new events
 
+
   extend(actors, C, maxEvtHistory, exC, enC);
+
+
+
+
+
+
+
+
+  // computing how many recomputation events
+  savedEvents = savedEvents + ( exC.size() - createdEvents) ;
+  totalCreatedEvents = totalCreatedEvents + createdEvents;
+
+  createdEvents = 0;
+
 
   for (auto it : C.events_)
     exC.erase(it);
 
-
-  // computing how many recomputation events
-  savedEvents = savedEvents + prev_exC.size() -1;
 
 
 
