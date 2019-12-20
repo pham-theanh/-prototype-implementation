@@ -155,7 +155,7 @@ void ksubset(unsigned long sizeD, std::list<UnfoldingEvent*> EvtList, std::list<
 }
 
 
-int K = 7;
+int K = 3000000;
 EventSet UnfoldingChecker::KpartialAlt(EventSet D1, Configuration C)
 {
 	EventSet D;
@@ -1587,12 +1587,6 @@ void UnfoldingChecker::explore(Configuration C, std::list<EventSet> maxEvtHistor
 
 
   extend(actors, C, maxEvtHistory, exC, enC);
-
-
-
-
-
-
 
 
   // computing how many recomputation events

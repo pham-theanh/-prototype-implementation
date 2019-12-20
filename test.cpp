@@ -277,8 +277,8 @@ case 167: { //RMQ-receiving
 
 			//std::cout << "\n explore full state space :\n";
 
-			State initState1(5, actor_set, { Mailbox(1) });
-			stateStack.push_back(initState1);
+			//State initState1(5, actor_set, { Mailbox(1) });
+			//stateStack.push_back(initState1);
 			//exhautiveExplore(stateStack, transList);
 
 
